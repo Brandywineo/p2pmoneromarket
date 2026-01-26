@@ -1,9 +1,9 @@
-"nano /etc/systemd/system/monero-deposit-daemon.service"
+``` nano /etc/systemd/system/monero-deposit-daemon.service ```sh
 
 paste this
 
  GNU nano 7.2          /etc/systemd/system/monero-deposit-daemon.service
-"
+```
 [Unit]
 Description=Monero Deposit Scanner Daemon
 After=network.target monero-wallet-rpc.service
@@ -27,5 +27,20 @@ StandardOutput=journal
 StandardError=journal
 [Install]
 WantedBy=multi-user.target
-
-"
+```
+```  nano /etc/systemd/system/monerod.service```
+```
+[Unit]
+Description=Monero Daemon
+After=network.target
+[Service]
+Type=simple
+User=root
+ExecStart=/root/monero-x86_64-linux-gnu-v0.18.4.5/monerod \
+  --data-dir=/var/lib/monero/.bitmonero \
+  --non-interactive
+Restart=always
+RestartSec=10
+[Install]
+WantedBy=multi-user.target
+```
