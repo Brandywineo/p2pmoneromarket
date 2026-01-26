@@ -1,0 +1,110 @@
+.progress-bar {
+    width: 100%;
+    height: 10px;
+    background: #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+    margin: 5px 0;
+}
+.progress-bar div {
+    height: 100%;
+    background: #4caf50;
+    width: 0;
+    transition: width 0.5s;
+}
+.balance-box {
+    background: #0b0b0b;
+    border: 1px solid #222;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.balance-amount strong {
+    font-size: 1.6rem;
+    color: #4cff8f;
+}
+
+.pending-deposits {
+    margin-top: 1rem;
+}
+
+.deposit-progress {
+    margin-bottom: 0.8rem;
+}
+
+.progress-bar {
+    background: #222;
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4cff8f, #00ffcc);
+}
+.deposit {
+    margin-bottom: 0.9rem;
+    font-size: 0.9rem;
+}
+
+.deposit p {
+    margin: 0.2rem 0;
+}
+
+/* Progress bar container */
+.progress-bar {
+    width: 100%;
+    height: 10px;
+    background: #1a1a1a;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Fill */
+.progress-fill {
+    height: 100%;
+    transition: width 0.4s ease;
+}
+
+/* Inline percentage label */
+.progress-label {
+    position: absolute;
+    right: 6px;
+    top: -18px;
+    font-size: 0.75rem;
+    color: #aaa;
+}
+
+/* States */
+.deposit.pending .progress-fill {
+    background: linear-gradient(90deg, #666, #888);
+}
+
+.deposit.locked .progress-fill {
+    background: linear-gradient(90deg, #ff9800, #ffc107);
+}
+
+.deposit.confirmed .progress-fill {
+    background: linear-gradient(90deg, #4cff8f, #00ffcc);
+}
+
+/* Address UX */
+.short-address {
+    font-family: monospace;
+    cursor: pointer;
+    word-break: break-all;
+}
+
+.view-all-link {
+    display: inline-block;
+    margin-top: 0.6rem;
+    font-size: 0.85rem;
+    color: #4cff8f;
+    text-decoration: none;
+}
+
+.view-all-link:hover {
+    text-decoration: underline;
+}
