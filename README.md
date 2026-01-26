@@ -44,3 +44,28 @@ RestartSec=10
 [Install]
 WantedBy=multi-user.target
 ```
+``` nano /etc/systemd/system/monero-wallet-rpc.service```
+```
+[Unit]
+Description=Monero Wallet RPC Service
+After=network.target monerod.service
+Wants=monerod.service
+[Service]
+User=root
+Group=root
+Type=simple
+ExecStart=/root/monero-x86_64-linux-gnu-v0.18.4.5/monero-wallet-rpc \
+    --wallet-file /root/monerowallet/walletName \
+    --password "07911617" \
+    --rpc-bind-port 18083 \
+    --rpc-bind-ip 127.0.0.1 \
+    --disable-rpc-login \
+    --confirm-external-bind \
+    --trusted-daemon \
+    --daemon-address 127.0.0.1:18081
+Restart=always
+RestartSec=5
+LimitNOFILE=4096
+[Install]
+WantedBy=multi-user.target
+```
