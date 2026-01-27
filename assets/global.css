@@ -1,0 +1,234 @@
+/* ===============================
+   MoneroMarket Global UI
+   =============================== */
+
+:root {
+    --bg-main: #0b0b0b;
+    --bg-card: #121212;
+    --bg-input: #1d1d1d;
+    --bg-hover: #222;
+
+    --border-soft: #2a2a2a;
+
+    --text-main: #e0e0e0;
+    --text-muted: #888;
+    --text-dim: #777;
+
+    --accent: #ff6600;
+    --accent-soft: #ff8533;
+
+    --radius-sm: 6px;
+    --radius-md: 10px;
+
+    --font-main: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: monospace;
+}
+
+/* ===============================
+   Reset / Base
+   =============================== */
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg-main);
+    color: var(--text-main);
+    font-family: var(--font-main);
+}
+
+/* ===============================
+   Typography
+   =============================== */
+
+h1, h2, h3 {
+    margin: 0 0 16px;
+    font-weight: 600;
+}
+
+h1 {
+    font-size: 1.35rem;
+    text-align: center;
+}
+
+h2 {
+    font-size: 1.1rem;
+}
+
+h3 {
+    font-size: 1rem;
+}
+
+.note {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 14px;
+}
+
+/* ===============================
+   Containers / Cards
+   =============================== */
+
+.container {
+    max-width: 420px;
+    margin: 80px auto;
+    padding: 30px;
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+}
+
+.card {
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    padding: 18px;
+    margin-bottom: 16px;
+}
+
+/* ===============================
+   Inputs
+   =============================== */
+
+label {
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+    display: block;
+}
+
+input, textarea, select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 18px;
+    background: var(--bg-input);
+    border: none;
+    border-radius: var(--radius-sm);
+    color: #fff;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    outline: 1px solid var(--accent);
+}
+
+/* ===============================
+   Buttons
+   =============================== */
+
+button,
+.btn {
+    width: 100%;
+    padding: 12px;
+    background: var(--accent);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    color: #000;
+    cursor: pointer;
+    transition: background .15s ease, transform .05s ease;
+}
+
+button:hover,
+.btn:hover {
+    background: var(--accent-soft);
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+/* Secondary / ghost button */
+.btn-ghost {
+    background: transparent;
+    color: var(--text-main);
+    border: 1px solid var(--border-soft);
+}
+
+.btn-ghost:hover {
+    background: var(--bg-hover);
+}
+
+/* ===============================
+   Address / TXID blocks
+   =============================== */
+
+.mono {
+    font-family: var(--font-mono);
+}
+
+.addr-card,
+.tx-card {
+    background: var(--bg-input);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    cursor: pointer;
+    transition: background .15s ease, outline .15s ease;
+}
+
+.addr-card:hover,
+.tx-card:hover {
+    background: var(--bg-hover);
+}
+
+.addr-short,
+.tx-short {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    word-break: break-word;
+}
+
+.addr-full,
+.tx-full {
+    display: none;
+    margin-top: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    word-break: break-all;
+}
+
+.addr-meta,
+.tx-meta {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    margin-top: 6px;
+}
+
+.copied {
+    outline: 1px solid var(--accent);
+}
+
+.copied .addr-short::after,
+.copied .tx-short::after {
+    content: " ✓ copied";
+    color: var(--accent);
+    font-size: 0.75rem;
+    margin-left: 6px;
+}
+
+/* ===============================
+   Links
+   =============================== */
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* ===============================
+   Mobile tweaks
+   =============================== */
+
+@media (max-width: 480px) {
+    .container {
+        margin: 40px 12px;
+        padding: 22px;
+    }
+}

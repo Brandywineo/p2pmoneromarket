@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 session_start();
 
 require_once __DIR__ . '/../includes/auth.php';
@@ -13,6 +12,7 @@ require_once __DIR__ . '/../includes/user.php';
 require_login();
 
 $user = get_current_user_data($_SESSION['user_id'], $pdo);
+
 if (!$user || (int)$user['backup_completed'] === 1) {
     header('Location: /dashboard.php');
     exit;
@@ -37,14 +37,12 @@ if (!file_exists($passFile) || !file_exists($backupFile) || !file_exists($pubFil
 }
 
 /* -----------------------------
- * POST handler for "Complete"
+ * POST handler
  * ----------------------------- */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
     if (!isset($_POST['confirm_download']) || $_POST['confirm_download'] !== '1') {
         $error = "You must confirm the download before completing.";
     } else {
-        // Read passphrase and public key
         $passphrase = trim(file_get_contents($passFile));
         $publicKey  = trim(file_get_contents($pubFile));
 
@@ -52,10 +50,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             die("Passphrase or public key missing.");
         }
 
-        // Hash passphrase
         $passHash = password_hash($passphrase, PASSWORD_DEFAULT);
 
-        // Update database
         $stmt = $pdo->prepare("
             UPDATE users
             SET recovery_code_hash = :passHash,
@@ -63,109 +59,138 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 backup_completed  = 1
             WHERE id = :uid
         ");
+
         $stmt->execute([
             ':passHash' => $passHash,
             ':pubKey'   => $publicKey,
             ':uid'      => $user['id']
         ]);
 
-        // Delete temp files
         @unlink($passFile);
         @unlink($pubFile);
         @unlink($backupFile);
 
-        // Redirect to unlocked dashboard
         header('Location: /dashboard.php');
         exit;
     }
 }
 
-/* -----------------------------
- * Read passphrase for display
- * ----------------------------- */
 $passphraseDisplay = htmlspecialchars(file_get_contents($passFile));
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Download Backup | MoneroMarket</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/assets/dashboard.css">
+
+<link rel="stylesheet" href="/assets/global.css">
+<script src="/assets/app.js" defer></script>
+
 <style>
-textarea {
-    width: 100%;
+.backup-wrap {
+    max-width: 520px;
+    margin: 80px auto;
+}
+
+.pass-box {
+    background: #0d0d0d;
+    border: 1px solid #1f1f1f;
+    border-radius: 8px;
+    padding: 14px;
     font-family: monospace;
-    font-size: 1rem;
-    padding: 10px;
-    box-sizing: border-box;
-    resize: none;
+    font-size: 0.95rem;
+    color: #eaeaea;
+    word-break: break-word;
+    cursor: pointer;
 }
+
+.pass-box.copied {
+    border-color: #2ecc71;
+}
+
+.warn {
+    color: #c0392b;
+    font-size: 0.85rem;
+    margin-top: 10px;
+}
+
+.confirm {
+    margin-top: 18px;
+    font-size: 0.85rem;
+}
+
 button:disabled {
-    background: #aaa;
+    opacity: 0.5;
     cursor: not-allowed;
-}
-.success-msg {
-    color: green;
-    font-weight: bold;
-    margin-top: 10px;
-}
-.error-msg {
-    color: red;
-    font-weight: bold;
-    margin-top: 10px;
 }
 </style>
 </head>
+
 <body>
 
-<?php include __DIR__ . '/../partials/header.php'; ?>
-<?php include __DIR__ . '/../partials/sidebar.php'; ?>
+<div class="container backup-wrap card">
 
-<main class="dashboard">
+    <h1>Recovery Backup</h1>
 
-<section class="card info">
-    <h3>Download Your Backup</h3>
-    <p>
-        Please copy your passphrase below and securely store it.  
-        You will also download your encrypted backup file.
+    <p class="note">
+        This is your <strong>only recovery method</strong>.<br>
+        Store it offline and never share it.
     </p>
 
-    <label for="passphrase">Passphrase (copy & save):</label>
-    <textarea id="passphrase" rows="3" readonly><?= $passphraseDisplay ?></textarea>
+    <label>Recovery Passphrase</label>
+    <div id="passBox" class="pass-box" onclick="copyPass()">
+        <?= $passphraseDisplay ?>
+    </div>
+    <small class="note">Tap to copy</small>
 
-    <p>
-        <a href="/backup/temp/<?= urlencode($username) ?>/<?= urlencode($username) ?>_backup.txt" download>
-            <button type="button">Download Backup File</button>
+    <div style="margin-top:22px;">
+        <a href="/backup/temp/<?= urlencode($username) ?>/<?= urlencode($username) ?>_backup.txt"
+           class="btn"
+           download>
+            Download Encrypted Backup
         </a>
+    </div>
+
+    <p class="warn">
+        ⚠ If you lose this file or passphrase, your account cannot be recovered.
     </p>
 
-    <form method="post">
+    <form method="post" class="confirm">
         <label>
             <input type="checkbox" name="confirm_download" value="1" id="confirm-checkbox">
-            I have downloaded and securely saved my backup file
+            I have downloaded and securely stored my backup
         </label>
-        <br><br>
-        <button type="submit" id="complete-btn" disabled>Complete</button>
+
+        <div style="margin-top:18px;">
+            <button type="submit" id="complete-btn" disabled>
+                Finish & Unlock Account
+            </button>
+        </div>
     </form>
 
     <?php if (!empty($error)): ?>
-        <p class="error-msg"><?= htmlspecialchars($error) ?></p>
+        <p class="error"><?= htmlspecialchars($error) ?></p>
     <?php endif; ?>
-</section>
+
+</div>
 
 <script>
-const checkbox = document.getElementById('confirm-checkbox');
-const button = document.getElementById('complete-btn');
+function copyPass() {
+    const box = document.getElementById('passBox');
+    navigator.clipboard.writeText(box.textContent.trim()).then(() => {
+        box.classList.add('copied');
+        setTimeout(() => box.classList.remove('copied'), 800);
+    });
+}
 
-checkbox.addEventListener('change', function() {
-    button.disabled = !this.checked;
+const checkbox = document.getElementById('confirm-checkbox');
+const button   = document.getElementById('complete-btn');
+
+checkbox.addEventListener('change', () => {
+    button.disabled = !checkbox.checked;
 });
 </script>
 
-</main>
-
-<?php include __DIR__ . '/../partials/footer.php'; ?>
 </body>
 </html>

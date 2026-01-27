@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 session_start();
 
 require_once __DIR__ . '/../includes/auth.php';
@@ -13,7 +12,6 @@ require_once __DIR__ . '/../includes/user.php';
 require_login();
 
 $user = get_current_user_data($_SESSION['user_id'], $pdo);
-
 if (!$user) {
     session_destroy();
     header('Location: /login.html');
@@ -27,38 +25,50 @@ if ((int)$user['backup_completed'] === 1) {
     header('Location: /dashboard.php');
     exit;
 }
-
-/* -----------------------------
- * Prepare temp workspace
- * ----------------------------- */
-$username = $user['username'];
-$baseTmp  = '/var/www/moneromarket/backup/temp';
-$userTmp  = $baseTmp . '/' . $username;
-
-if (!is_dir($userTmp)) {
-    mkdir($userTmp, 0700, true);
-}
-chmod($userTmp, 0700);
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Generating Keys | MoneroMarket</title>
+<title>Backup Keys | MoneroMarket</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/assets/loader.css">
+
+<link rel="stylesheet" href="/assets/global.css">
+<script src="/assets/app.js" defer></script>
+
 <style>
+.backup-wrap {
+    max-width: 420px;
+    margin: 80px auto;
+}
+
+.loader {
+    width: 36px;
+    height: 36px;
+    border: 3px solid #222;
+    border-top: 3px solid var(--accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 24px auto;
+    display: none;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.status-text {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #aaa;
+    margin-top: 12px;
+}
+
 .success {
-    color: #4caf50;
-    font-weight: bold;
-    margin-top: 15px;
-}
-.error {
-    color: #f44336;
-    font-weight: bold;
-    margin-top: 15px;
-}
-.hidden {
+    color: #2ecc71;
+    text-align: center;
+    font-size: 0.95rem;
+    margin-top: 16px;
     display: none;
 }
 </style>
@@ -66,63 +76,69 @@ chmod($userTmp, 0700);
 
 <body>
 
-<section class="loader-card">
-    <h2>Generating Your Backup Keys</h2>
+<div class="container backup-wrap">
 
-    <p id="status-text">
-        Please wait while your cryptographic keys are being created.
-        This may take up to 30 seconds.
-    </p>
+    <div class="card">
 
-    <div class="loader" id="spinner"></div>
+        <h1>Secure Backup</h1>
 
-    <p class="note">
-        Do not refresh or close this page.
-    </p>
+        <p class="note">
+            You are about to generate your recovery keys.<br>
+            Store them securely. They cannot be recovered if lost.
+        </p>
 
-    <p id="success-msg" class="success hidden">
-        ✔ Keys generated successfully. Preparing download…
-    </p>
+        <button class="btn" id="startBackup">
+            Generate Backup Keys
+        </button>
 
-    <p id="error-msg" class="error hidden">
-        ✖ Key generation failed. Please contact support.
-    </p>
-</section>
+        <div class="loader" id="loader"></div>
+
+        <div class="status-text" id="statusText"></div>
+        <div class="success" id="successMsg">
+            Keys generated successfully ✓
+        </div>
+
+    </div>
+
+</div>
 
 <script>
-(function () {
+const btn = document.getElementById('startBackup');
+const loader = document.getElementById('loader');
+const statusText = document.getElementById('statusText');
+const successMsg = document.getElementById('successMsg');
+
+btn.addEventListener('click', () => {
+    btn.disabled = true;
+    btn.textContent = 'Generating…';
+    loader.style.display = 'block';
+    statusText.textContent = 'Generating secure keys…';
+
     fetch('/backup/passphrase_gen.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
     })
-    .then(resp => resp.json())
-    .then(data => {
-        const spinner = document.getElementById('spinner');
-        const status  = document.getElementById('status-text');
-        const success = document.getElementById('success-msg');
-        const error   = document.getElementById('error-msg');
-
-        spinner.classList.add('hidden');
-
-        if (data.status === 'ok') {
-            status.textContent = 'Key generation completed.';
-            success.classList.remove('hidden');
-
-            setTimeout(() => {
-                window.location.href = '/backup/download.php';
-            }, 1500);
-
-        } else {
-            status.textContent = 'An error occurred.';
-            error.classList.remove('hidden');
+    .then(r => r.json())
+    .then(res => {
+        if (!res || res.status !== 'ok') {
+            throw new Error('Key generation failed');
         }
+
+        loader.style.display = 'none';
+        statusText.textContent = '';
+        successMsg.style.display = 'block';
+
+        setTimeout(() => {
+            window.location.href = '/backup/download.php';
+        }, 1400);
     })
     .catch(() => {
-        document.getElementById('spinner').classList.add('hidden');
-        document.getElementById('status-text').textContent = 'Network error.';
-        document.getElementById('error-msg').classList.remove('hidden');
+        loader.style.display = 'none';
+        btn.disabled = false;
+        btn.textContent = 'Generate Backup Keys';
+        statusText.textContent = 'Something went wrong. Please try again.';
     });
-})();
+});
 </script>
 
 </body>

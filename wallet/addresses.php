@@ -1,11 +1,12 @@
 <?php
 declare(strict_types=1);
-
 session_start();
+
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../db/database.php';
 
 require_login();
+
 $userId = (int)$_SESSION['user_id'];
 
 $stmt = $pdo->prepare("
@@ -16,29 +17,116 @@ $stmt = $pdo->prepare("
 ");
 $stmt->execute([$userId]);
 $addresses = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+function short_addr(string $addr): string {
+    return substr($addr, 0, 6) . '…' . substr($addr, -6);
+}
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Your Subaddresses</title>
+<title>Deposit Addresses</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="/assets/global.css">
 <link rel="stylesheet" href="/assets/dashboard.css">
+
+<style>
+/* Page-only layout helpers */
+.address-page {
+    max-width: 420px;
+    margin: 40px auto;
+}
+
+.address-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.addr-card {
+    cursor: pointer;
+}
+
+.addr-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.generate-wrap {
+    margin-top: 28px;
+}
+</style>
 </head>
+
 <body>
 
-<h1>Your Deposit Addresses</h1>
+<div class="container address-page">
 
-<button id="generateSubaddress">Generate New</button>
+    <h1>Deposit Addresses</h1>
 
-<ul class="address-list">
-<?php foreach ($addresses as $a): ?>
-    <li title="<?= htmlspecialchars($a['address']) ?>">
-        <code><?= $a['address'] ?></code>
-        <button onclick="copyText('<?= $a['address'] ?>')">Copy</button>
-    </li>
-<?php endforeach; ?>
-</ul>
+    <div class="address-list">
 
-<script src="/assets/wallet.js"></script>
+        <?php if (!$addresses): ?>
+            <p class="note">No deposit addresses yet.</p>
+        <?php endif; ?>
+
+        <?php foreach ($addresses as $a): ?>
+            <div class="addr-card card"
+                 onclick="copyAddress(this)"
+                 data-address="<?= htmlspecialchars($a['address']) ?>">
+
+                <div class="addr-top">
+                    <div class="addr-short mono">
+                        <?= htmlspecialchars(short_addr($a['address'])) ?>
+                    </div>
+                </div>
+
+                <div class="addr-full mono">
+                    <?= htmlspecialchars($a['address']) ?>
+                </div>
+
+                <div class="addr-meta">
+                    Created <?= htmlspecialchars(date('Y-m-d H:i', strtotime($a['created_at']))) ?>
+                </div>
+            </div>
+        <?php endforeach; ?>
+
+    </div>
+
+    <div class="generate-wrap">
+        <button class="btn" id="generateSubaddress">
+            + Generate New Address
+        </button>
+    </div>
+
+</div>
+
+<script>
+function copyAddress(card) {
+    const addr = card.dataset.address;
+
+    navigator.clipboard.writeText(addr).then(() => {
+        card.classList.add('copied');
+
+        const full = card.querySelector('.addr-full');
+        if (full) full.style.display = 'block';
+
+        setTimeout(() => {
+            card.classList.remove('copied');
+        }, 900);
+    });
+}
+
+document.getElementById('generateSubaddress')?.addEventListener('click', () => {
+    fetch('/wallet/generate_subaddress.php', { method: 'POST' })
+        .then(r => r.json())
+        .then(() => location.reload())
+        .catch(() => alert('Failed to generate address'));
+});
+</script>
+
 </body>
 </html>

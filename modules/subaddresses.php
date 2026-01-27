@@ -1,7 +1,9 @@
 <?php
-// Fetch latest subaddress for dashboard
+declare(strict_types=1);
+
+/* Fetch latest subaddress */
 $stmt = $pdo->prepare("
-    SELECT id, address
+    SELECT address
     FROM subaddresses
     WHERE user_id = ?
     ORDER BY created_at DESC
@@ -11,31 +13,32 @@ $stmt->execute([$user['id']]);
 $latest = $stmt->fetch(PDO::FETCH_ASSOC);
 ?>
 
-<!-- Latest deposit address -->
-<div class="balance-box">
-    <h3>Your Latest Subaddress</h3>
+<section class="card addresses-card">
+    <h3>Addresses</h3>
 
     <?php if ($latest): ?>
-        <p id="latest-addr"
-           class="short-address"
-           title="<?= htmlspecialchars($latest['address']) ?>">
-            <?= htmlspecialchars(substr($latest['address'], 0, 14)) ?>…
-        </p>
+        <div class="address-row"
+             onclick="copyAddress(this)"
+             data-address="<?= htmlspecialchars($latest['address']) ?>"
+             title="Click to copy">
+
+            <span class="address-text">
+                <?= htmlspecialchars($latest['address']) ?>
+            </span>
+
+            <span class="copy-hint">Tap to copy</span>
+        </div>
     <?php else: ?>
-        <p id="latest-addr">No subaddress yet</p>
+        <p class="note">No deposit address yet.</p>
     <?php endif; ?>
 
-    <button id="generate-new-subaddress">
-        Generate New Subaddress
-    </button>
+    <div class="address-actions">
+        <a href="/wallet/addresses.php" class="btn primary">
+            Generate new address
+        </a>
 
-    <a href="/wallet/addresses.php" class="view-all-link">
-        View all deposit addresses →
-    </a>
-</div>
-
-<!-- Incoming deposits / confirmations -->
-<div class="balance-box">
-    <h3>Incoming Deposits</h3>
-    <div id="pending-deposits"></div>
-</div>
+        <a href="/wallet/addresses.php" class="link">
+            View all addresses →
+        </a>
+    </div>
+</section>

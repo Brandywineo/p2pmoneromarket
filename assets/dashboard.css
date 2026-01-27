@@ -6,6 +6,9 @@
     overflow: hidden;
     margin: 5px 0;
 }
+.tx-row.copied {
+    border-color: #00ff9c;
+}
 .progress-bar div {
     height: 100%;
     background: #4caf50;
@@ -107,4 +110,200 @@
 
 .view-all-link:hover {
     text-decoration: underline;
+}
+.transactions {
+    background: #0b0b0b;
+    border: 1px solid #1f1f1f;
+}
+
+.tx-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.tx-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #111;
+    border: 1px solid #222;
+    padding: 12px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.tx-row:hover {
+    background: #151515;
+}
+
+.tx-amount {
+    font-weight: 600;
+    color: #00ff9c;
+    white-space: nowrap;
+}
+
+.tx-id {
+    max-width: 60%;
+    overflow: hidden;
+    text-align: right;
+}
+
+.tx-full {
+    display: none;
+    word-break: break-all;
+}
+
+@media (min-width: 700px) {
+    .tx-short { display: none; }
+    .tx-full { display: inline; }
+}
+
+.incoming-banner {
+    background: #141414;
+    border-left: 3px solid #ffaa00;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    color: #ffaa00;
+}
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+}
+
+.dash-left h2 {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #e5e5e5;
+    margin: 0;
+}
+
+.dash-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Icons */
+.dash-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.dash-icon {
+    text-decoration: none;
+    font-size: 1.2rem;
+    color: #ccc;
+    padding: 6px 8px;
+    border-radius: 4px;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.dash-icon:hover {
+    background: #1a1a1a;
+    color: #00ff9c;
+}
+
+/* Mobile menu */
+.menu-toggle {
+    background: none;
+    border: none;
+    color: #ccc;
+    font-size: 1.4rem;
+    cursor: pointer;
+}
+
+.dash-dropdown {
+    display: none;
+    position: absolute;
+    right: 16px;
+    top: 60px;
+    background: #0f0f0f;
+    border: 1px solid #222;
+    border-radius: 6px;
+    overflow: hidden;
+    z-index: 1000;
+}
+
+.dash-dropdown a {
+    display: block;
+    padding: 10px 14px;
+    color: #ddd;
+    text-decoration: none;
+    font-size: 0.95rem;
+}
+
+.dash-dropdown a:hover {
+    background: #1a1a1a;
+    color: #00ff9c;
+}
+
+/* Responsive rules */
+.desktop-only { display: flex; }
+.mobile-only { display: none; }
+
+@media (max-width: 700px) {
+    .desktop-only { display: none; }
+    .mobile-only { display: block; }
+}
+.addresses-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.address-row {
+    background: #0b0b0b;
+    border: 1px solid #1f1f1f;
+    border-radius: 10px;
+    padding: 12px;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.address-text {
+    display: block;
+    font-family: monospace;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* On larger screens, allow more visibility */
+@media (min-width: 768px) {
+    .address-text {
+        white-space: normal;
+        word-break: break-all;
+    }
+}
+
+.copy-hint {
+    font-size: 11px;
+    opacity: 0.6;
+    margin-top: 4px;
+}
+
+.address-row.copied {
+    border-color: #2ecc71;
+}
+
+.address-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.address-actions .btn {
+    text-align: center;
+}
+
+.address-actions .link {
+    font-size: 13px;
+    text-align: center;
+    opacity: 0.8;
 }
