@@ -1,0 +1,365 @@
+/* ===============================
+   MoneroMarket Global UI (LOCKED)
+   =============================== */
+
+:root {
+    --bg-main: #0b0b0b;
+    --bg-card: #121212;
+    --bg-input: #1d1d1d;
+    --bg-hover: #222;
+    --border-soft: #2a2a2a;
+
+    --text-main: #e0e0e0;
+    --text-muted: #888;
+    --text-dim: #777;
+
+    --accent: #ff6600;
+    --accent-soft: #ff8533;
+
+    --radius-sm: 6px;
+    --radius-md: 10px;
+
+    --font-main: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: monospace;
+}
+
+/* ===============================
+   Reset / Base
+   =============================== */
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg-main);
+    color: var(--text-main);
+    font-family: var(--font-main);
+}
+
+/* ===============================
+   Typography
+   =============================== */
+
+h1, h2, h3 {
+    margin: 0 0 16px;
+    font-weight: 600;
+}
+
+h1 {
+    font-size: 1.35rem;
+    text-align: center;
+}
+
+h2 { font-size: 1.1rem; }
+h3 { font-size: 1rem; }
+
+.note {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 14px;
+}
+
+/* ===============================
+   Containers / Cards
+   =============================== */
+
+.container {
+    width: min(100%, 1200px);
+    margin: 80px auto;
+    padding: 30px;
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+}
+
+.card {
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    padding: 18px;
+    margin-bottom: 16px;
+}
+
+/* ===============================
+   Inputs
+   =============================== */
+
+label {
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+    display: block;
+}
+
+input,
+textarea,
+select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 18px;
+    background: var(--bg-input);
+    border: none;
+    border-radius: var(--radius-sm);
+    color: #fff;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    outline: 1px solid var(--accent);
+}
+
+/* ===============================
+   Buttons
+   =============================== */
+
+button,
+.btn {
+    width: 100%;
+    padding: 12px;
+    background: var(--accent);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    color: #000;
+    cursor: pointer;
+    transition: background .15s ease, transform .05s ease;
+}
+
+button:hover,
+.btn:hover {
+    background: var(--accent-soft);
+}
+
+button:active,
+.btn:active {
+    transform: scale(0.98);
+}
+
+.btn-ghost {
+    background: transparent;
+    color: var(--text-main);
+    border: 1px solid var(--border-soft);
+}
+
+.btn-ghost:hover {
+    background: var(--bg-hover);
+}
+
+/* ===============================
+   Ad Cards (Mobile First)
+   =============================== */
+
+.ad-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.ad-left {
+    order: 1;
+}
+
+.ad-right {
+    order: 2;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.ad-username {
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.ad-price {
+    font-size: 1rem;
+    margin-top: 2px;
+}
+
+.ad-limits {
+    font-weight: 500;
+}
+
+.ad-margin {
+    margin-top: 2px;
+}
+
+.trade-action {
+    margin-top: 12px;
+}
+
+.trade-action .btn {
+    width: 100%;
+    text-align: center;
+}
+
+/* Desktop upgrade */
+@media (min-width: 640px) {
+    .ad-row {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .ad-right {
+        text-align: right;
+    }
+
+    .trade-action .btn {
+        width: auto;
+    }
+}
+
+/* ===============================
+   Address / TXID Blocks
+   =============================== */
+
+.mono {
+    font-family: var(--font-mono);
+}
+
+.addr-card,
+.tx-card {
+    background: var(--bg-input);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    cursor: pointer;
+    transition: background .15s ease, outline .15s ease;
+}
+
+.addr-card:hover,
+.tx-card:hover {
+    background: var(--bg-hover);
+}
+
+.addr-short,
+.tx-short {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    word-break: break-word;
+}
+
+.addr-full,
+.tx-full {
+    display: none;
+    margin-top: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    word-break: break-all;
+}
+
+.addr-meta,
+.tx-meta {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    margin-top: 6px;
+}
+
+.copied {
+    outline: 1px solid var(--accent);
+}
+
+.copied .addr-short::after,
+.copied .tx-short::after {
+    content: " ✓ copied";
+    color: var(--accent);
+    font-size: 0.75rem;
+    margin-left: 6px;
+}
+
+/* ===============================
+   Links
+   =============================== */
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* ===============================
+   Header / Navigation
+   =============================== */
+
+.site-header {
+    background: var(--bg-card);
+    padding: 14px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.logo {
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 1rem;
+}
+
+.header-nav {
+    display: flex;
+    align-items: center;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: 14px;
+    font-size: 0.85rem;
+    color: var(--text-main);
+}
+
+.nav-item:hover {
+    color: var(--accent);
+}
+
+.nav-item.danger:hover {
+    color: #ff5252;
+}
+
+/* Mobile: icons only */
+@media (max-width: 640px) {
+    .nav-item .text {
+        display: none;
+    }
+
+    .nav-item {
+        margin-left: 12px;
+        font-size: 1.2rem;
+    }
+}
+
+/* ===============================
+   Responsive Containers
+   =============================== */
+
+@media (min-width: 768px) {
+    .container {
+        padding: 40px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .container {
+        width: min(100%, 1400px);
+    }
+}
+
+@media (min-width: 1600px) {
+    .container {
+        width: min(100%, 1600px);
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        margin: 40px 12px;
+        padding: 22px;
+    }
+}
