@@ -8,32 +8,18 @@ require_once __DIR__ . '/../db/database.php';
    =============================== */
 $prices = require __DIR__ . '/../includes/price_oracle.php';
 
-if (empty($prices)) {
-    exit('Price oracle unavailable.');
+if (!is_array($prices) || empty($prices)) {
+    $ads = [];
+    return;
 }
 
 /* ===============================
-   Allowed coins
-   =============================== */
-$allowedCoins = array_keys($prices);
-
-/* ===============================
-   Selected coin
-   =============================== */
-$crypto_pay = $_GET['crypto'] ?? 'usdt';
-
-if (!in_array($crypto_pay, $allowedCoins, true)) {
-    $crypto_pay = 'usdt';
-}
-
-$marketPrice = $prices[$crypto_pay];
-
-/* ===============================
-   Fetch listings
+   Fetch ALL active listings
    =============================== */
 $sql = "
     SELECT
         l.id,
+        l.user_id,
         l.type,
         l.crypto_pay,
         l.margin_percent,
@@ -44,36 +30,40 @@ $sql = "
         l.created_at,
         u.username
     FROM listings l
-    JOIN users u ON u.id = l.user_id
-    WHERE l.crypto_pay = :crypto
-      AND l.status = 'active'
+    INNER JOIN users u ON u.id = l.user_id
+    WHERE l.status = 'active'
     ORDER BY l.created_at DESC
 ";
 
 $stmt = $pdo->prepare($sql);
-$stmt->execute([':crypto' => $crypto_pay]);
-$listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$stmt->execute();
+
+$ads = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 /* ===============================
-   Calculate live price
+   Price calculation per ad
    =============================== */
-$ads = [];
+foreach ($ads as &$ad) {
 
-foreach ($listings as $row) {
-    $finalPrice = $marketPrice * (1 + ($row['margin_percent'] / 100));
+    $coin = strtolower($ad['crypto_pay']);
 
-    $ads[] = [
-        'id' => (int)$row['id'],
-        'type' => $row['type'],
-        'username' => $row['username'],
-        'crypto_pay' => $row['crypto_pay'],
-        'price' => round($finalPrice, 8),
-        'market_price' => $marketPrice,
-        'margin_percent' => (float)$row['margin_percent'],
-        'min_xmr' => (float)$row['min_xmr'],
-        'max_xmr' => (float)$row['max_xmr'],
-        'payment_time_limit' => (int)$row['payment_time_limit'],
-        'terms' => $row['terms'],
-        'created_at' => $row['created_at']
-    ];
+    if (!isset($prices[$coin])) {
+        continue;
+    }
+
+    $marketPrice = (float) $prices[$coin];
+    $margin      = (float) $ad['margin_percent'];
+
+    $pricePerXmr = $marketPrice * (1 + ($margin / 100));
+
+    $ad['market_price']     = $marketPrice;
+    $ad['price_per_xmr']    = round($pricePerXmr, 8);
+    $ad['min_trade_value']  = round($pricePerXmr * (float)$ad['min_xmr'], 8);
+    $ad['max_trade_value']  = round($pricePerXmr * (float)$ad['max_xmr'], 8);
+
+    // TEMP defaults (until reputation system exists)
+    $ad['online'] = true;
+    $ad['rating'] = 0;
 }
+
+unset($ad);

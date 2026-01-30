@@ -1,6 +1,13 @@
 <?php
-// ads/apply_filters.php
 declare(strict_types=1);
+
+/* ===============================
+   SAFETY GUARD
+   =============================== */
+if (!isset($ads) || !is_array($ads)) {
+    $ads = [];
+    return;
+}
 
 $coinFilter   = $_GET['coin']   ?? null;
 $amountFilter = (float)($_GET['amount'] ?? 0);
@@ -10,47 +17,37 @@ $sortMode     = $_GET['sort']   ?? 'cheap';
 /* ===============================
    FILTER ADS
    =============================== */
+$ads = array_filter($ads, function ($ad) use ($coinFilter, $amountFilter) {
 
-$ads = array_filter($ads, function ($ad) use ($coinFilter, $amountFilter, $spendFilter) {
-
-    if ($coinFilter && strtoupper($ad['crypto_pay']) !== strtoupper($coinFilter)) {
+    if ($coinFilter && strtolower($ad['crypto_pay']) !== strtolower($coinFilter)) {
         return false;
     }
 
     if ($amountFilter > 0) {
-        if ($amountFilter < $ad['min_xmr'] || $amountFilter > $ad['max_xmr']) {
+        if ($amountFilter < (float)$ad['min_xmr'] || $amountFilter > (float)$ad['max_xmr']) {
             return false;
         }
     }
 
-    // Spend filter reserved for price conversion
     return true;
 });
 
 /* ===============================
    SORT ADS
-   Priority:
-   1. Online
-   2. Rating
-   3. Margin
    =============================== */
-
 usort($ads, function ($a, $b) use ($sortMode) {
 
-    // Online first
     if ($a['online'] !== $b['online']) {
         return $a['online'] ? -1 : 1;
     }
 
-    // Higher rating first
     if ($a['rating'] !== $b['rating']) {
         return $b['rating'] <=> $a['rating'];
     }
 
-    // Margin
     if ($sortMode === 'expensive') {
-        return $b['margin_percent'] <=> $a['margin_percent'];
+        return $b['price_per_xmr'] <=> $a['price_per_xmr'];
     }
 
-    return $a['margin_percent'] <=> $b['margin_percent'];
+    return $a['price_per_xmr'] <=> $b['price_per_xmr'];
 });

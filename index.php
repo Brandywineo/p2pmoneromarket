@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
-session_start();
 
+session_start();
 $is_logged_in = isset($_SESSION['user_id']);
 
 require_once __DIR__ . '/ads/fetch_listings.php';
@@ -20,9 +20,14 @@ if ($is_logged_in) {
     $user_can_trade = !empty($u['pgp_public']) && (int)$u['backup_completed'] === 1;
 }
 
-/* Split ads */
-$buyAds  = array_filter($ads, fn($a) => $a['type'] === 'buy');
-$sellAds = array_filter($ads, fn($a) => $a['type'] === 'sell');
+/* ===============================
+   Split ads (FIXED LOGIC)
+   Viewer intent:
+   - Buy XMR tab  → show SELL ads
+   - Sell XMR tab → show BUY ads
+   =============================== */
+$buyAds  = array_filter($ads, fn($a) => $a['type'] === 'sell');
+$sellAds = array_filter($ads, fn($a) => $a['type'] === 'buy');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -52,23 +57,19 @@ $sellAds = array_filter($ads, fn($a) => $a['type'] === 'sell');
     color: #000;
     font-weight: 600;
 }
-
 .listings {
     max-width: 900px;
     margin: auto;
 }
-
 .ad-card {
     background: var(--bg-card);
     border-radius: var(--radius-md);
     padding: 16px;
     margin-bottom: 14px;
 }
-
 .ad-header {
     font-weight: 600;
 }
-
 .ad-meta {
     font-size: 0.8rem;
     color: var(--text-muted);
@@ -79,22 +80,17 @@ $sellAds = array_filter($ads, fn($a) => $a['type'] === 'sell');
 .trade-action {
     margin-top: 14px;
 }
-
-/* Mobile: full width */
 .trade-action a {
     display: block;
     width: 100%;
     text-align: center;
 }
-
-/* Desktop: inline */
 @media (min-width: 640px) {
     .trade-action a {
         width: auto;
         display: inline-block;
     }
 }
-
 .trade-muted {
     font-size: 0.75rem;
     color: var(--text-dim);
@@ -110,7 +106,6 @@ function showTab(type) {
 }
 </script>
 </head>
-
 <body>
 
 <?php require __DIR__ . '/assets/header.php'; ?>
@@ -122,19 +117,17 @@ function showTab(type) {
 </div>
 
 <div class="listings">
+    <div id="buyTab">
+        <?php foreach ($buyAds as $ad): ?>
+            <?php require __DIR__ . '/ads/ad_card.php'; ?>
+        <?php endforeach; ?>
+    </div>
 
-<div id="buyTab">
-<?php foreach ($buyAds as $ad):
-    require __DIR__ . '/ads/ad_card.php';
-endforeach; ?>
-</div>
-
-<div id="sellTab" style="display:none;">
-<?php foreach ($sellAds as $ad):
-    require __DIR__ . '/ads/ad_card.php';
-endforeach; ?>
-</div>
-
+    <div id="sellTab" style="display:none;">
+        <?php foreach ($sellAds as $ad): ?>
+            <?php require __DIR__ . '/ads/ad_card.php'; ?>
+        <?php endforeach; ?>
+    </div>
 </div>
 
 </body>
