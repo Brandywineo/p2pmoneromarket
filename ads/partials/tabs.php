@@ -1,8 +1,8 @@
-<div class="tab-buttons">
-    <button id="buyTab" class="active" onclick="switchTab('buy')">
+<div class="tabs">
+    <button id="btnBuy" class="tab-btn active" onclick="showTab('buy')">
         Buy XMR
     </button>
-    <button id="sellTab" class="btn-ghost" onclick="switchTab('sell')">
+    <button id="btnSell" class="tab-btn" onclick="showTab('sell')">
         Sell XMR
     </button>
 </div>

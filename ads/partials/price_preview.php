@@ -1,5 +1,20 @@
-<div class="preview">
-    <div>Market price: <span data-price="market">–</span></div>
-    <div>Your price: <span data-price="final">–</span></div>
-    <div>Fee: <span data-price="fee">–</span></div>
+<div class="price-preview">
+    <div class="hint">
+        Positive = above market, Negative = below market
+    </div>
+
+    <div class="preview-line">
+        <strong>Market price:</strong>
+        <span class="market-price">–</span>
+    </div>
+
+    <div class="preview-line">
+        <strong>Your price:</strong>
+        <span class="your-price">–</span>
+    </div>
+
+    <div class="preview-line">
+        <strong>Fee:</strong>
+        <span class="fee-preview">–</span>
+    </div>
 </div>

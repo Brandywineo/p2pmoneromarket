@@ -31,6 +31,19 @@
     min-width: 0;
 }
 
+
+.ad-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.ad-form input,
+.ad-form select,
+.ad-form textarea {
+    width: 100%;
+}
+
 /* ===============================
    Reset / Base
    =============================== */
@@ -69,6 +82,31 @@ h3 { font-size: 1rem; }
     color: var(--text-muted);
     text-align: center;
     margin-top: 14px;
+}
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+.modal.hidden {
+    display: none;
+}
+.modal-card {
+    background: #111;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 360px;
+    width: 90%;
+}
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
 }
 
 /* ===============================

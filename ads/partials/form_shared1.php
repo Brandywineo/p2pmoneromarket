@@ -1,5 +1,5 @@
 <form method="post" action="create_submit.php" class="ad-form">
-    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token()) ?>">
+
     <input type="hidden" name="type" value="<?= htmlspecialchars($type) ?>">
 
     <!-- MIN XMR -->
@@ -34,13 +34,6 @@
             max="<?= (float)($balances['xmr'] ?? 0) ?>"
         <?php endif; ?>
     >
-
-    <?php if ($type === 'sell'): ?>
-        <div class="balance-warning"
-             style="display:none; color:#ff6b6b; font-size:0.85rem;">
-            Not enough XMR available
-        </div>
-    <?php endif; ?>
 
     <!-- CRYPTO -->
     <label>
@@ -92,4 +85,5 @@
     <button type="submit">
         Create <?= ucfirst($type) ?> Ad
     </button>
+
 </form>

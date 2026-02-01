@@ -1,0 +1,50 @@
+/* ================================
+   Edit Ad Page Styles
+   ================================ */
+
+.edit-ad-container {
+    max-width: 700px;
+    margin: 24px auto;
+}
+
+/* Reuse grid logic from create, but scoped */
+.edit-ad-form {
+    display: grid;
+    gap: 10px;
+}
+
+.edit-ad-form input,
+.edit-ad-form select,
+.edit-ad-form textarea {
+    width: 100%;
+}
+
+/* Textarea tuning */
+.edit-ad-form textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+/* Responsive grid */
+@media (min-width: 640px) {
+    .edit-ad-form {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .edit-ad-form textarea,
+    .edit-ad-form button,
+    .edit-ad-form .price-preview {
+        grid-column: span 2;
+    }
+}
+
+/* Headline spacing */
+.edit-ad-title {
+    margin-bottom: 12px;
+}
+
+/* Hint text */
+.edit-ad-form .hint {
+    font-size: 0.85rem;
+    opacity: 0.8;
+}

@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 session_start();
+
 require_once __DIR__ . '/../includes/auth.php';
 require_login();
 
@@ -11,13 +12,22 @@ require_once __DIR__ . '/lib/ad_creator.php';
 
 $type = $_POST['type'] ?? '';
 
-if ($type === 'buy') {
-    create_ad($_POST, $pdo, 'buy');
-} elseif ($type === 'sell') {
-    create_ad($_POST, $pdo, 'sell');
-} else {
-    exit('Invalid ad type');
-}
+try {
 
-header('Location: /dashboard.php');
-exit;
+    if ($type === 'buy') {
+        create_ad($_POST, $pdo, 'buy');
+
+    } elseif ($type === 'sell') {
+        create_ad($_POST, $pdo, 'sell');
+
+    } else {
+        throw new Exception('Invalid ad type');
+    }
+
+    header('Location: /dashboard.php');
+    exit;
+
+} catch (Exception $e) {
+    http_response_code(400);
+    exit($e->getMessage());
+}

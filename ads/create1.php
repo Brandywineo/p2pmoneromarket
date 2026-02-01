@@ -1,13 +1,10 @@
 <?php
 declare(strict_types=1);
-
 session_start();
 
-/* Auth + backup guard */
-require_once __DIR__ . '/../modules/backup_guard.php';
-
+require_once __DIR__ . '/../includes/auth.php';
+require_login();
 require_once __DIR__ . '/../db/database.php';
-
 ob_start();
 require_once __DIR__ . '/../modules/balance.php';
 ob_end_clean();
@@ -28,6 +25,7 @@ $coins = [
 <meta charset="UTF-8">
 <title>Create Ad</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <link rel="stylesheet" href="/assets/global.css">
 <script src="/assets/app.js" defer></script>
 <script src="/assets/ad_preview.js" defer></script>
@@ -62,6 +60,7 @@ $coins = [
 .tab-content.active {
     display: block;
 }
+
 .ad-form {
     display: grid;
     gap: 10px;
@@ -83,15 +82,13 @@ $coins = [
 function showTab(type) {
     document.getElementById('buyForm').classList.toggle('active', type === 'buy');
     document.getElementById('sellForm').classList.toggle('active', type === 'sell');
+
     document.getElementById('btnBuy').classList.toggle('active', type === 'buy');
     document.getElementById('btnSell').classList.toggle('active', type === 'sell');
 }
 </script>
 </head>
-
 <body>
-
-<?php require __DIR__ . '/../assets/header.php'; ?>
 
 <div class="container">
     <h1>Create P2P Ad</h1>
